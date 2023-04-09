@@ -42,6 +42,7 @@
 var canvasColor = "white"
 var colour = document.querySelector("#color").value
 var brushSize = 10
+var penPressure = 1
 function clearWorld() {
     world={};
     drawNextFrame()
@@ -317,6 +318,16 @@ mouse = (function() {
                 var y = pos[1];
 	        if (self.clicked != 0) {
 	            //self.squeakin(x,y);
+
+                // // ***************************************
+                // alert("pressure: " + e.pressure);
+                if (e.pressure) {
+                    penPressure = e.pressure;
+                } // else {
+                //     penPressure = 1;
+                // }
+                
+
                     self.callListeners(self.mousedraggers,x,y,self.clicked,e);
 	        }
                 self.callListeners(self.mousemovers,x,y,self.clicked,e);
@@ -330,7 +341,7 @@ mouse = (function() {
         // Install the mouse listeners
 	mouseinstall: function() {
             canvas.addEventListener("mousedown",  self.mousedown, false);
-            canvas.addEventListener("mousemove",  self.mousemove, false);
+            canvas.addEventListener("pointermove",  self.mousemove, false);
             canvas.addEventListener("mouseup",    self.mouseup, false);
             canvas.addEventListener("mouseout",   self.mouseout, false);
             canvas.addEventListener("touchstart", self.touchstart, false);
@@ -355,7 +366,7 @@ mouse.mouseuppers.push(function(x,y,clicked,e) {
 
 mouse.mousedraggers.push(function(x,y,clicked,e) {
     addEntityWithoutName({'x':x,'y':y,'colour':colour,
-                          'radius':brushSize, 'status':'mid'});
+                          'radius':brushSize * penPressure, 'status':'mid'});
 });
 
 
