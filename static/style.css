@@ -1,0 +1,426 @@
+:root
+{
+    --brush-color: rgba(0, 0, 0, 1);
+    --alpha: 1;
+    --color-no-alpha: rgb(0,0,0);
+    --brush-size: 10;
+}
+input[type="color"]
+{
+    opacity: var(--alpha);
+    border-radius: 50%;
+    /* border-style:; */
+    width: 3rem;
+    height: 3rem;
+    /* padding: .5rem; */
+    background-color: transparent;
+    cursor: pointer;   
+    border-radius: 50%;
+    border: none;
+    outline: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+input[type="color"]::-webkit-color-swatch
+{
+    border-radius: 50%;
+}
+input[type="color"]::-moz-color-swatch
+{
+    border-radius: 50%;
+}
+
+
+
+
+/* @media (min-width: 60em) { */
+/* center fixed thing on screen: https://stackoverflow.com/a/2006008 */
+    .Menu
+    {
+        /* background-color: darkslategrey; */
+        /* text-align: center;
+        vertical-align: center; */
+        /* color: aqua; */
+        position: fixed;
+        top: 5%;
+        left: 50%;
+        transform: translate(-50%, 0);
+        border-style: groove;
+        /* border-color: aqua; */
+        border-radius: 1em;
+        font-size: 26pt;
+        /* column-gap: .25em; */
+        padding: .1em;
+        /* max-width: 100vh; */
+        /* flex-wrap: nowrap; */
+        flex-grow: 1;
+        flex-shrink: 1;
+
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        min-height: 5vh;
+        background: #001f24;
+        /* flex-direction: row; */
+
+    }
+/* } */
+.MenuItem
+{
+    /* flex-direction: row; */
+    justify-content: space-evenly;
+    /* padding: .15em; */
+    flex-grow: 1;
+    flex-shrink: 1;
+    /* color: aqua; */
+    /* border-style: groove; */
+    /* border-color: aqua; */
+    border-radius: 1000000000000000000px;
+}
+.ToolRow
+{
+    justify-content: space-evenly;
+    column-gap: .25em;
+    padding-left: .2em;
+    padding-right: .2em;
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    flex-shrink: 1;
+    max-width: max-content;
+    /* position: relative; */
+    align-items: center;
+}
+
+/******************************************** Radio Button Styles **********************************************/
+
+#undo::before
+{
+    content: 'undo';
+}
+#redo::before
+{
+    content: 'redo';
+}
+#clear::before
+{
+    content: 'clear';
+}
+
+/*fancy radio buttons: https://www.youtube.com/watch?v=qQgZbUY9rHg */
+label
+{
+    align-items: center;
+    /* justify-content: space-evenly; */
+    text-align: center;
+    /* border-style: none; */
+    /* font-size: small; */
+    position: relative;
+    /* top: .5em; */
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+}
+input[type="radio"], button
+{
+    appearance: none;
+    border: none;
+}
+button, span
+{
+    position: relative;
+    display: block;
+    width: 1.5em/* 200px */;
+    height: 1.5em/* 70px */;
+    background: black;
+    border-radius: 50%;
+}
+
+label span::before, button::before
+{
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: calc(100% - 6px);
+    height: calc(100% - 6px);
+    background: linear-gradient(to bottom, #081d22, #073130);
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5),
+        inset 2px 2px 2px rgba(255,255,255,0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: .5em;
+    font-weight: 250;
+    color: #030f11;
+}
+label input:checked ~ span::before
+{
+  content: '';
+    color: white;
+    /* text-shadow: 0 0 20px #0f0; */
+    background: linear-gradient(to top, #081d22, #073130);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5),
+        inset 1px 1px 1px rgba(0,0,0,0.4),
+        inset -1px -1px 4px rgba(255,255,255,0.2);
+}
+button:active::before
+{
+    content: '';
+    color: #030f11;
+    /* text-shadow: 0 0 20px #0f0; */
+    background: linear-gradient(to top, #081d22, #073130);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5),
+        inset 1px 1px 1px rgba(0,0,0,0.4),
+        inset -1px -1px 4px rgba(255,255,255,0.2);
+    text-shadow: none;
+}
+/* #tool_brush_segmented:checked ~ span::before
+{
+    content: "Segmented";
+    color: white;
+    text-shadow: 0 0 2px white,
+        0 0 5px white,
+        0 0 10px white,
+        0 0 15px white,
+        0 0 20px white,
+        0 0 25px white,
+        0 0 30px white,
+        0 0 40px white;
+} */
+
+#tool_brush_segmented ~ span::after
+{
+    background-image:
+        radial-gradient(circle at 50% 60%, transparent 20%, #030f11 25%, transparent 26%),
+        radial-gradient(circle at 50% 47%, transparent 18%, #030f11 23%, transparent 24%),
+        radial-gradient(circle at 50% 34%, transparent 14%, #030f11 17%, transparent 18%);
+
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 50%;
+    transform: translate(50%, -50%);
+    width: 2em;
+    height: 2em;
+}
+#tool_brush_segmented:checked ~ span::after
+{
+    background-image:
+        radial-gradient(circle at 50% 60%, transparent 15%, white 25%, transparent 30%),
+        radial-gradient(circle at 50% 47%, transparent 12%, white 23%, transparent 27%),
+        radial-gradient(circle at 50% 34%, transparent 10%, white 17%, transparent 22%);
+}
+
+#tool_brush_unified ~ span::after
+{
+    border:solid #030f11 2px;
+
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 50%;
+    transform: translate(50%, -50%);
+    width: 15px;
+    height: 30px;
+    border-radius: 10000000000000000000000000px;
+}
+#tool_brush_unified:checked ~ span::after
+{
+    border:solid white 2px;
+    box-shadow: 0 0 2px white,
+        0 0 5px white,
+        0 0 10px white,
+        inset 0 0 2px white,
+        inset 0 0 5px white,
+        inset 0 0 10px white;
+}
+
+#tool_eraser ~ span::after
+{
+    /* Eraser icon by See Icons at https://www.flaticon.com/authors/see-icons */
+    content: url(eraser.png);
+    /* background-image: url(eraser.png); */
+    /* background-size: contain; */
+    position: absolute;
+    bottom: 50%;
+    right: 50%;
+    transform: translate(27%, 27%) scale(0.07);
+    color: #030f11;
+    filter: invert(6%) sepia(28%) saturate(816%) hue-rotate(141deg) brightness(93%) contrast(103%); /*Handy little filter thing: https://stackoverflow.com/a/43960991*/
+    width: 2em;
+    height: 2em;
+}
+#tool_eraser:checked ~ span::after
+{
+    filter: drop-shadow(0 0 .5em black) drop-shadow(0 0 1.25em black) drop-shadow(0 0 2.5em black) invert();
+}
+
+button
+{
+    border-style: solid;
+    height: 3rem;
+    width: 3rem;
+    border-radius: 50%;
+    font-size: x-large;
+    font-weight: 1000;
+}
+
+button::before
+{
+    width: calc(100% - 3px);
+    height: calc(100% - 3px);
+    top: 1.5px;
+    left: 1.5px;
+    color: white;
+    text-shadow: 0 0 2px white,
+        0 0 5px white,
+        0 0 10px white,
+        0 0 15px white,
+        0 0 20px white,
+        0 0 30px white;
+}
+
+
+
+/********************************************************************** Slider Styles ******************************************************************/
+
+/* how to style sliders multi browser: https://www.smashingmagazine.com/2021/12/create-custom-range-input-consistent-browsers/ */
+/* clear default range style */
+input[type="range"]
+{
+    margin: 0.4rem;
+    -webkit-appearance: none;
+    appearance: none;
+
+    /* Checkered Pattern, LOTUSMS: https://stackoverflow.com/a/47061022 */
+    background: -webkit-linear-gradient(45deg, rgba(0, 0, 0, 0.0980392) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.0980392) 75%, rgba(0, 0, 0, 0.0980392) 0), -webkit-linear-gradient(45deg, rgba(0, 0, 0, 0.0980392) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.0980392) 75%, rgba(0, 0, 0, 0.0980392) 0), white;
+    background: -moz-linear-gradient(45deg, rgba(0, 0, 0, 0.0980392) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.0980392) 75%, rgba(0, 0, 0, 0.0980392) 0), -moz-linear-gradient(45deg, rgba(0, 0, 0, 0.0980392) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.0980392) 75%, rgba(0, 0, 0, 0.0980392) 0), white;
+    background: linear-gradient(45deg, rgba(0, 0, 0, 0.0980392) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.0980392) 75%, rgba(0, 0, 0, 0.0980392) 0), linear-gradient(45deg, rgba(0, 0, 0, 0.0980392) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.0980392) 75%, rgba(0, 0, 0, 0.0980392) 0), white;
+    background-repeat: repeat, repeat;
+    background-position: 0px 0, 5px 5px;
+    -webkit-transform-origin: 0 0 0;
+    transform-origin: 0 0 0;
+    -webkit-background-origin: padding-box, padding-box;
+    background-origin: padding-box, padding-box;
+    -webkit-background-clip: border-box, border-box;
+    background-clip: border-box, border-box;
+    -webkit-background-size: 10px 10px, 10px 10px;
+    background-size: 10px 10px, 10px 10px;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    text-shadow: none;
+    -webkit-transition: none;
+    -moz-transition: none;
+    -o-transition: none;
+    transition: none;
+    -webkit-transform: scaleX(1) scaleY(1) scaleZ(1);
+    transform: scaleX(1) scaleY(1) scaleZ(1);
+
+    cursor: pointer;
+    /* width: 15rem; */
+    height: 1.5em;
+    min-width: 7rem;
+    /* max-width: 15rem; */
+}
+
+
+
+/************************************************** Slider Thumb Styles **********************************************/
+/***** Chrome, Safari, Opera, and Edge Chromium *****/
+input[type="range"]::-webkit-slider-thumb
+{
+    -webkit-appearance: none; /* Override default look */
+    appearance: none;
+    /* margin-top = (track height in pixels / 2) - (thumb height in pixels /2) */
+    margin-top: calc((1.5em - 1.8em) / 2);/* Centers thumb on the track */
+    height: 1.8em;
+    width: 1.8em;
+    box-shadow: inset -1px -3px 3px rgba(0,0,0,0.5),
+        inset 2px 3px 1px rgba(255,255,255,0.3);
+    border-radius: 50%;
+
+    background: radial-gradient(circle at center, #333, #333 35%, #eee 75%, #333 75%);
+} input[type="range"]::-moz-range-thumb {
+    border: none; /*Removes extra border that FF applies*/
+    /*border-radius: 0; Removes default border-radius that FF applies*/
+    background-color: var(--brush-color)/* #f00 */;
+    height: 1.8em;
+    width: 1.8em;
+    box-shadow: inset -1px -3px 3px rgba(0,0,0,0.5),
+        inset 2px 3px 1px rgba(255,255,255,0.3);
+    border-radius: 50%;
+
+    background: radial-gradient(circle at center, #333, #333 35%, #eee 75%, #333 75%);
+}
+
+/************************************************** Slider Track Styles **********************************************/
+/***** Chrome, Safari, Opera, and Edge Chromium *****/
+#alpha::-webkit-slider-runnable-track
+{
+  background: linear-gradient(to right, transparent, var(--color-no-alpha));
+  /* height: calc((var(--brush-size)  / 100) * 1rem); */
+  /* border-radius: calc((var(--brush-size) / 100) * 1rem); */
+  border-radius: 1em;
+  /* outline: 4px ridge rgb(81, 81, 81); */
+  border-style: groove;
+  border-color: darkgray;
+  height: 1.5em;
+} #alpha::-moz-range-track {
+  background: linear-gradient(to right, transparent, var(--color-no-alpha));
+  border-radius: 1em;
+  border-style: groove;
+  border-color: darkgray;
+  height: 1.5em;
+}
+
+/* SLIDER TRACK FOR BRUSH SIZE */
+#size::-webkit-slider-runnable-track
+{
+    /* css triangle john negoita: https://www.coding-dude.com/wp/css/create-a-triangle/ */
+    background: conic-gradient(at 0%, transparent 84deg, var(--color-no-alpha) 87deg, var(--color-no-alpha) 93deg, transparent 96deg);
+    border-radius: 1em;
+    border-style: groove;
+    border-color: darkgray;
+    height: 1.5em;
+} #size::-moz-range-track {
+    /* css triangle john negoita: https://www.coding-dude.com/wp/css/create-a-triangle/ */
+    background: conic-gradient(at 0%, transparent 84deg, var(--color-no-alpha) 87deg, var(--color-no-alpha) 93deg, transparent 96deg);
+    border-radius: 1em;
+    border-style: groove;
+    border-color: darkgray;
+    height: 1.5em;
+}
+
+/************************************************** Slider Focus Styles **********************************************/
+/* Removes default focus */
+input[type="range"]:focus
+{
+  outline: none;
+}
+
+/***** Chrome, Safari, Opera, and Edge Chromium *****/
+#alpha:focus::-webkit-slider-thumb,
+#alpha:hover::-webkit-slider-thumb
+{
+    background: radial-gradient(circle at center, var(--brush-color), #333 35%, #eee 75%, #333 75%);
+}
+#size:focus::-webkit-slider-thumb,
+#size:hover::-webkit-slider-thumb
+{
+    background: radial-gradient(circle at center, black, #333 calc(var(--brush-size) * .5%), #eee 75%, #333 75%);
+}
+
+/******** Firefox ********/
+#alpha:focus::-moz-range-thumb,
+#alpha:hover::-moz-range-thumb
+{
+    background: radial-gradient(circle at center, var(--brush-color), #333 35%, #eee 75%, #333 75%);   
+}
+#size:focus::-moz-range-thumb,
+#size:hover::-moz-range-thumb
+{
+    background: radial-gradient(circle at center, black, #333 calc(var(--brush-size) * .5%), #eee 75%, #333 75%);
+}
