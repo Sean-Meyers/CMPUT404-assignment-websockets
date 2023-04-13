@@ -368,6 +368,8 @@ function newEntity(x, y, strokeId, end=false) {
             stroke.mids.push(data);
         }
     }
+    data["tool"] = tool;
+    socket.send( JSON.stringify( data ) );
     drawNextFrame();
     return strokeId;
 }
@@ -580,6 +582,8 @@ function wsSetup() {
     socket = new WebSocket(url);
     socket.onopen = function() {
         //XXX: TODO What are you going to do here?
+
+        // retrieve and render the world? ...hmmm... maybe not
     };
     socket.onerror = function(msg) {
         debug("WebSocket Error:" + msg.data);
@@ -587,8 +591,29 @@ function wsSetup() {
     socket.onmessage = function(msg) {  
         try {
             debug("WebSocket Recv:" + msg.data);
-            //XXX: TODO What are you going to do here?            
+            //XXX: TODO What are you going to do here?
+            https://github.com/uofa-cmput404/cmput404-slides/blob/master/examples/WebSocketsExamples/static/chat.html
+            var message = JSON.parse(msg.data);
+            if (message.tail) {
+                let different_stroke_from_different_folk = Stroke(message.begin, message.tool, context);
+                for (let entity of message.tail) {
+                    different_stroke_from_different_folk.mids.push(entity); // Prolly put the end in the mids by mistake but eh.
+                }   
+            } else if (message.strokeId) {
+                let tool = message.tool;
+                delete message.tool;
+                if (world[message.strokeId]) {
+                    world[message.strokeId].mids.push(message);
+                } else {
+                    // Don't question it, I must be low on sleep and thus have questionable ideas of fun
+                    let new_stroke_from_new_bloke = Stroke(message, tool, context);
+                    world[message.strokeId] = new_stroke_from_new_bloke;
+                }
+                // TODO: else if message === "clear" or something, except it's prolly in json. implement ws clearing stuff first.
+            }
+            // Convert ws data to strokes, add/remove to/from world
         } catch (e) {
+            console.log(e);
             alert("socket on message: " + e);
         }
     }; 
