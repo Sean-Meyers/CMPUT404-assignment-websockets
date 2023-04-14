@@ -87,12 +87,6 @@ function hexToRGB(hex, alpha) {
     }
 }
 
-function clearWorld() {
-    undoStack.push({'type': 'clear', 'data': world})
-    world={};
-    drawNextFrame()
-}
-
 menuItems = document.querySelectorAll(".MenuItem.FormInput");
 for (menuItem of menuItems) {
     menuItem.addEventListener("change", (event) => {
@@ -128,6 +122,13 @@ var W = canvas.width  = window.innerWidth-6;
 var H = canvas.height = window.innerHeight-50;
 var wscounter = 0;
 var socket;
+
+function clearWorld() {
+    undoStack.push({'type': 'clear', 'data': world});
+    socket.send(JSON.stringify({'cmd': 'clear'})); // A plan would've done wonders for consistency lol
+    world={};
+    drawNextFrame()
+}
 
 function debug(str) {
     // var debugDiv = document.getElementById('debug');
@@ -276,11 +277,13 @@ function undo() {
     if (!(typeof action === "object")) {
         // action is a string representing the id of the stroke to undo.
         let stroke = world[action];
+        socket.send(JSON.stringify({'cmd': 'unstroke', 'data':action}));
         redoStack.push(stroke);
         delete world[action];
     }
     if (action.type === 'clear') {
         // action is an object containing it's type ('clear') and the world data to restore.
+        socket.send(JSON.stringify({'cmd': 'unclear'}));
         world = action.data;
         redoStack.push('clear');
     }
@@ -289,28 +292,15 @@ function undo() {
 
 function redo() {
     let stroke = redoStack.pop();
-    // if (Array.isArray(stroke)) {
-    //     for (let action of stroke) {
-    //         let entity = action.entity;
-    //         let data = action.data
-    //         world[entity] = data;
-    //         if (data.status === 'begin') {
-    //             undoStack.push([entity]);
-    //         } else {
-    //             undoStack[undoStack.length - 1].push(entity);
-    //         }
-    //     }
-    // } else {
-    //     if (stroke.type === 'clear') {
-    //         clearWorld();
-    //     }
-    // }
     if (typeof stroke === "object") {
         // the stroke is a Stroke object
         let strokeId = stroke.begin.strokeId;
+        socket.send(JSON.stringify({'cmd': 'restroke', 'data':strokeId}));
         world[strokeId] = stroke;
         undoStack.push(strokeId);
     } else if (stroke === 'clear') {
+        // stroke isn't a Stroke, but a clear command
+        socket.send(JSON.stringify({'cmd': 'reclear'}));
         clearWorld();
     }
     drawNextFrame();
@@ -601,6 +591,47 @@ function handleServerEntity(parsed_msg_data) {
     // TODO: else if message === "clear" or something, except it's prolly in json. implement ws clearing stuff first.
 }
 
+// We don't want other user's actions to be undoable, even if it's a clear, so keep separate stacks
+hiddenUndoStack = [];
+hiddenRedoStack = [];
+
+function handleServerCmd(parsed_msg_data) {
+    // Note: since we're dealing with the undos and redos of potentially several foreign
+    // users, can't clear the redostack when a new thing happens. May also be other
+    // weird bugs caused by this way of handeling things but eh, should be fine.
+    switch (parsed_msg_data.cmd) {
+        case 'clear':
+            hiddenUndoStack.push(world);
+            world={};
+            break;
+        case 'unclear':
+            var thing = hiddenUndoStack.pop();
+            hiddenRedoStack.push(thing);    // Need to push the whole 'thing' since if someone else wants to re-clear, it doesn't erase all our own work between the initial clear and the redo
+            Object.assign(world, thing);
+            break;
+        case 'reclear':
+            var thing = hiddenRedoStack.pop();  // This will break if someone undoes something after the 'unclear' but before the 'reclear'.
+            hiddenUndoStack.push(thing);
+            for (let entity of Object.keys(thing)) {
+                delete world[entity];
+            }
+            break;
+        case 'unstroke':
+            var strokeId = parsed_msg_data.data;
+            var stroke = world[strokeId];
+            hiddenRedoStack.push({'strokeId': strokeId, 'data': stroke});
+            delete world[strokeId];
+            break;
+        case 'restroke':
+            var stroke = hiddenRedoStack.pop();
+            hiddenUndoStack.push(stroke.strokeId);  // May not be necessary the way we're doing things, since we're not calling undo to actually undo, but getting the id of what is to be undone from the server, pushing this to the undo stack may be useless.
+            world[stroke.strokeId] = stroke.data;
+            break;
+        default:
+            break;
+    }
+}
+
 function wsSetup() {
     var url = "ws://"+host+"/subscribe";   
     socket = new WebSocket(url);
@@ -621,6 +652,8 @@ function wsSetup() {
             var message = JSON.parse(msg.data);
             if (message.tail) {
                 handleServerStroke(message);
+            } else if (message.cmd) {
+                handleServerCmd(message);
             } else if (message.strokeId) {
                 handleServerEntity(message);
             }

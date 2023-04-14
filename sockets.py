@@ -92,62 +92,7 @@ class Stroke:
         
 @app.route('/')
 def hello():
-    '''Return something coherent here.. perhaps redirect to /static/index.html '''
-    
-    # XXX DEBUG: Start world with content to test receiving.    
-    # tail = [
-    #     {'x': 401, 'y': 208.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 399, 'y': 208.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 397, 'y': 208.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 395, 'y': 208.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 390, 'y': 208.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 380.5, 'y': 207.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 376.5, 'y': 207.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 365.5, 'y': 206.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 361, 'y': 205.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 352, 'y': 204.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 343.5, 'y': 203.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 340.5, 'y': 203.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 334.5, 'y': 202.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 326, 'y': 201.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 323, 'y': 200.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 315, 'y': 199.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 312, 'y': 199, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 302.5, 'y': 196.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 290.5, 'y': 195.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 286, 'y': 195, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 273.5, 'y': 191.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 261.5, 'y': 188, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 256, 'y': 187, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 248, 'y': 186, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 245.5, 'y': 185.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 241.5, 'y': 184.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 238.5, 'y': 184, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 237, 'y': 184, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 234, 'y': 183, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 231, 'y': 183, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 229, 'y': 182.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 226, 'y': 182.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 224.5, 'y': 181.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 221.5, 'y': 181.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 219.5, 'y': 181, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 218, 'y': 181, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 216, 'y': 180, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 212.5, 'y': 179.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 211.5, 'y': 179.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 208.5, 'y': 178.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 207, 'y': 178, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 205, 'y': 177, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 202.5, 'y': 177, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 202, 'y': 177, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
-    #     {'x': 201.5, 'y': 176.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'}
-    # ]
-    # begin = {'x': 401, 'y': 208, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 10, 'strokeId': 'pos269472208time1681358525594', 'tool':'brush_segmented'}
-    # stroke = Stroke(begin)
-    # for point in tail:
-    #     stroke.tail.append(point)
-    # myWorld.set('pos269472208time1681358525594', stroke)
-    
+    '''Return something coherent here.. perhaps redirect to /static/index.html '''  
     return redirect("/static/index.html", code=302)
 
 
@@ -165,6 +110,8 @@ def send_all_json(obj, sender=None):
 class Client:
     def __init__(self):
         self.queue = queue.Queue()
+        self.undo_stack = []
+        self.redo_stack = []
 
     def put(self, v):
         self.queue.put_nowait(v)
@@ -177,34 +124,49 @@ def read_ws(ws,client):
     '''A greenlet function that reads from the websocket and updates the world'''
     # XXX: TODO IMPLEMENT ME
 
-    # data = {'x':x, 'y':y, 'colour':colour, 'radius':brushSize * penPressure, 'strokeId':strokeId, 'tool':tool}
-    # if world[strokeId]:
-    #   world[strokeId].append(data)
-    #   for listener in listeners if listener not sender:
-    #       listener_ws.send(data)
-    # else:
-    #   world[strokeId] = Stroke(data)
-    #   for listener in listeners if listener not sender:
-    #       listener_ws.send(data)
+    # {'x':x, 'y':y, 'colour':colour, 'radius':brushSize * penPressure, 'strokeId':strokeId, 'tool':tool}
     
     # https://github.com/uofa-cmput404/cmput404-slides/blob/master/examples/WebSocketsExamples/chat.py    
     try:
         while True:
             msg = ws.receive()
             print("WS RECV: %s" % msg)
-            if (msg is not None):
-                packet = json.loads(msg)
-                stroke_id = packet.get('strokeId','')
-                if not stroke_id:   # TODO: Deal with clear commands being sent to the server.
-                    # Dunno what to do with this, who cares, just add to world, send to clients and move on. TODO
-                    myWorld.set(packet) # This is a bit... it won't work, lets hope it doesn't need to to pass the tests.
-                elif not myWorld.get(stroke_id):
-                    myWorld.set(stroke_id, Stroke(packet))
-                else:
-                    myWorld.get(stroke_id).tail.append(packet)
-                send_all_json( packet )
-            else:
+            if (not msg):
+                print('Received nothing. As vengeance, your connection is now busted.')
                 break
+            packet = json.loads(msg)
+            if packet.get('cmd'):
+                if packet['cmd'] == 'clear':
+                    client.undo_stack.append(myWorld.world())
+                    myWorld.clear()
+                elif packet['cmd'] == 'unclear':
+                    world = client.undo_stack.pop()
+                    client.redo_stack.append(world)
+                    myWorld.space.update(world)
+                elif packet['cmd'] == 'reclear':
+                    world = client.redo_stack.pop()
+                    client.undo_stack.append(world)
+                    for key in world.keys():
+                        myWorld.space.pop(key)
+                elif packet['cmd'] == 'unstroke':
+                    stroke = myWorld.space.pop(packet["data"])
+                    client.redo_stack.append({'stroke_id': packet["data"], 'data': stroke})
+                elif packet['cmd'] == 'restroke':
+                    stroke = client.redo_stack.pop()
+                    client.undo_stack.append(stroke['stroke_id'])
+                    myWorld.update(stroke)
+                send_all_json(packet, client)
+                continue
+            stroke_id = packet.get('strokeId','')
+            if not stroke_id:   # TODO: Deal with clear commands being sent to the server.
+                # Dunno what to do with this, who cares, just add to world, send to clients and move on. TODO
+                myWorld.set(packet) # This is a bit... it won't work, lets hope it doesn't need to to pass the tests.
+            elif not myWorld.get(stroke_id):
+                myWorld.set(stroke_id, Stroke(packet))
+            else:
+                myWorld.get(stroke_id).tail.append(packet)
+            client.redo_stack = [];
+            send_all_json(packet, client)
     except:
         '''Done'''
     
