@@ -130,8 +130,9 @@ var wscounter = 0;
 var socket;
 
 function debug(str) {
-    var debugDiv = document.getElementById('debug');
-    debugDiv.innerHTML = "" + str;
+    // var debugDiv = document.getElementById('debug');
+    // debugDiv.innerHTML = "" + str;
+    console.debug(str);
 }
 // debug("Test");
 
@@ -369,6 +370,7 @@ function newEntity(x, y, strokeId, end=false) {
         }
     }
     data["tool"] = tool;
+    // console.log('sending message:', data);
     socket.send( JSON.stringify( data ) );
     drawNextFrame();
     return strokeId;
@@ -577,41 +579,52 @@ function update() {
     drawFrame();
 }
 
+// Handle a full stroke received from the server
+function handleServerStroke(parsed_msg_data) {
+    let different_stroke_from_different_folk = Stroke(parsed_msg_data.begin, parsed_msg_data.tool, context);
+    for (let entity of parsed_msg_data.tail) {
+        different_stroke_from_different_folk.mids.push(entity); // Prolly put the end in the mids by mistake but eh.
+    }
+    world[different_stroke_from_different_folk.begin.strokeId] = different_stroke_from_different_folk;
+}
+
+function handleServerEntity(parsed_msg_data) {
+    let tool = parsed_msg_data.tool;
+    // delete parsed_msg_data.tool;
+    if (world[parsed_msg_data.strokeId]) {
+        world[parsed_msg_data.strokeId].mids.push(parsed_msg_data);
+    } else {
+        // Don't question it, I must be low on sleep and thus have questionable ideas of fun
+        let new_stroke_from_new_bloke = Stroke(parsed_msg_data, tool, context);
+        world[parsed_msg_data.strokeId] = new_stroke_from_new_bloke;
+    }
+    // TODO: else if message === "clear" or something, except it's prolly in json. implement ws clearing stuff first.
+}
+
 function wsSetup() {
     var url = "ws://"+host+"/subscribe";   
     socket = new WebSocket(url);
     socket.onopen = function() {
         //XXX: TODO What are you going to do here?
-
-        // retrieve and render the world? ...hmmm... maybe not
+        // Nothin.
     };
     socket.onerror = function(msg) {
         debug("WebSocket Error:" + msg.data);
     };
-    socket.onmessage = function(msg) {  
+    socket.onmessage = function(msg) {
         try {
             debug("WebSocket Recv:" + msg.data);
             //XXX: TODO What are you going to do here?
-            https://github.com/uofa-cmput404/cmput404-slides/blob/master/examples/WebSocketsExamples/static/chat.html
+            // Convert ws data to strokes, add/remove to/from world
+
+            // https://github.com/uofa-cmput404/cmput404-slides/blob/master/examples/WebSocketsExamples/static/chat.html
             var message = JSON.parse(msg.data);
             if (message.tail) {
-                let different_stroke_from_different_folk = Stroke(message.begin, message.tool, context);
-                for (let entity of message.tail) {
-                    different_stroke_from_different_folk.mids.push(entity); // Prolly put the end in the mids by mistake but eh.
-                }   
+                handleServerStroke(message);
             } else if (message.strokeId) {
-                let tool = message.tool;
-                delete message.tool;
-                if (world[message.strokeId]) {
-                    world[message.strokeId].mids.push(message);
-                } else {
-                    // Don't question it, I must be low on sleep and thus have questionable ideas of fun
-                    let new_stroke_from_new_bloke = Stroke(message, tool, context);
-                    world[message.strokeId] = new_stroke_from_new_bloke;
-                }
-                // TODO: else if message === "clear" or something, except it's prolly in json. implement ws clearing stuff first.
+                handleServerEntity(message);
             }
-            // Convert ws data to strokes, add/remove to/from world
+            drawNextFrame();
         } catch (e) {
             console.log(e);
             alert("socket on message: " + e);

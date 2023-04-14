@@ -70,29 +70,85 @@ def set_listener( entity, data ):
 
 myWorld.add_set_listener( set_listener )
         
+        
+        
+class Stroke:
+    def __init__(self, begin_entity:dict) -> None:
+        # {'x':x, 'y':y, 'colour':colour, 'radius':brushSize * penPressure, 'strokeId':strokeId, 'tool':tool}
+        # self.stroke_id = begin_entity.get('strokeId','')
+        # assert self.stroke_id, "Invalid entity format for Stroke initialization; begin_entity is required to have a 'strokeId' field."
+        self.tool = begin_entity.get('tool','')
+        assert self.tool, "Invalid entity format for Stroke initialization; begin_entity is required to have a 'tool' field."
+        # begin_entity.pop('tool')    # Easier for client to deal with this way I guess. Tho, could just let client do it instead...
+        self.begin = begin_entity
+        self.tail = []  # Includes all points in stroke except begin_entity
+        
+    # TODO: something something client_id so that we don't get a bug when multiple users start their strokes at the same place and time. this todo doesn't necesarilly belong in this class, I was just lazy. 
+
+    def as_dict(self):
+        return {'begin': self.begin, 'tool':self.tool, 'tail': self.tail} # Allows us to bulk send strokes if needed.
+        
+        
+        
 @app.route('/')
 def hello():
     '''Return something coherent here.. perhaps redirect to /static/index.html '''
+    
+    # XXX DEBUG: Start world with content to test receiving.    
+    # tail = [
+    #     {'x': 401, 'y': 208.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 399, 'y': 208.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 397, 'y': 208.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 395, 'y': 208.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 390, 'y': 208.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 380.5, 'y': 207.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 376.5, 'y': 207.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 365.5, 'y': 206.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 361, 'y': 205.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 352, 'y': 204.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 343.5, 'y': 203.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 340.5, 'y': 203.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 334.5, 'y': 202.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 326, 'y': 201.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 323, 'y': 200.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 315, 'y': 199.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 312, 'y': 199, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 302.5, 'y': 196.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 290.5, 'y': 195.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 286, 'y': 195, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 273.5, 'y': 191.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 261.5, 'y': 188, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 256, 'y': 187, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 248, 'y': 186, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 245.5, 'y': 185.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 241.5, 'y': 184.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 238.5, 'y': 184, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 237, 'y': 184, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 234, 'y': 183, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 231, 'y': 183, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 229, 'y': 182.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 226, 'y': 182.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 224.5, 'y': 181.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 221.5, 'y': 181.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 219.5, 'y': 181, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 218, 'y': 181, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 216, 'y': 180, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 212.5, 'y': 179.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 211.5, 'y': 179.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 208.5, 'y': 178.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 207, 'y': 178, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 205, 'y': 177, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 202.5, 'y': 177, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 202, 'y': 177, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'},
+    #     {'x': 201.5, 'y': 176.5, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 5, 'strokeId': 'pos269472208time1681358525594', 'tool': 'brush_segmented'}
+    # ]
+    # begin = {'x': 401, 'y': 208, 'colour': 'rgba(0, 0, 0, 0.6)', 'radius': 10, 'strokeId': 'pos269472208time1681358525594', 'tool':'brush_segmented'}
+    # stroke = Stroke(begin)
+    # for point in tail:
+    #     stroke.tail.append(point)
+    # myWorld.set('pos269472208time1681358525594', stroke)
+    
     return redirect("/static/index.html", code=302)
-
-
-
-
-class Stroke:
-        def __init__(self, begin_entity:dict) -> None:
-            # {'x':x, 'y':y, 'colour':colour, 'radius':brushSize * penPressure, 'strokeId':strokeId, 'tool':tool}
-            # self.stroke_id = begin_entity.get('strokeId','')
-            # assert self.stroke_id, "Invalid entity format for Stroke initialization; begin_entity is required to have a 'strokeId' field."
-            self.tool = begin_entity.get('tool','')
-            assert self.tool, "Invalid entity format for Stroke initialization; begin_entity is required to have a 'tool' field."
-            begin_entity.pop('tool')    # Easier for client to deal with this way I guess. Tho, could just let client do it instead...
-            self.begin = begin_entity
-            self.tail = []  # Includes all points in stroke except begin_entity
-            
-        # TODO: something something client_id so that we don't get a bug when multiple users start their strokes at the same place and time. this todo doesn't necesarilly belong in this class, I was just lazy. 
-        
-        def as_dict(self):
-            return {'begin': self.begin, 'tool':self.tool, 'tail': self.tail} # Allows us to bulk send strokes if needed.
 
 
 clients = list()
@@ -169,21 +225,43 @@ def subscribe_socket(ws):
         # New client, so send the world.
         for entity in myWorld.world().values():
             if type(entity) is Stroke:    
-                client.put(entity.as_dict())
+                client.put(json.dumps(entity.as_dict()))
             else:
-                client.put(entity)  # We'll let the client deal with any weird stuff like non-stroke objects.
+                client.put(json.dumps(entity))  # We'll let the client deal with any weird stuff like non-stroke objects.
         while True:
             # block here
             msg = client.get()
+            # print(type(msg))
+            # print('sending:', msg)
             ws.send(msg)
+            
+            # debug (why is there neither documentation or comments for this ws module? looks like it's deprecated too...):
+            # gonna maybe leave this here to document my strife so that future me knows what not to do, if ever I want to use this module again.
+            # try:
+            #     ws.send('{"hello":"json"}')
+            # except Exception as e:# WebSocketError as e:
+            #     print("WS Error... doesn't like str json: %s" % e)
+            # try:
+            #     ws.send({"hello":"json"})
+            # except Exception as e:# WebSocketError as e:
+            #     print("WS Error... doesn't like dict: %s" % e)
+            
+            # try:
+            #     ws.send(b'hello bytes')
+            # except Exception as e:# WebSocketError as e:
+            #     print("WS Error... doesn't like bytes: %s" % e)
+            # # try:
+            # #     ws.send(8512121591420) # helloint according to https://www.thefontworld.com/leet-speak-translator
+            # # except Exception as e:# WebSocketError as e:
+            # #     print("WS Error... doesn't like int: %s" % e)
+            # try:
+            #     ws.send('hello str')
+            # except Exception as e:# WebSocketError as e:
+            #     print("WS Error... doesn't like str: %s" % e)
+            
+            
     except Exception as e:# WebSocketError as e:
         print("WS Error %s" % e)
-        print(dir(e))
-        print(e.__cause__)
-        print(e.__context__)
-        print(e.__doc__)
-        print(e.__traceback__)
-        # print(e.with_traceback())
     finally:
         clients.remove(client)
         gevent.kill(g)
