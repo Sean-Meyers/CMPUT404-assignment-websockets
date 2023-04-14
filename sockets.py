@@ -152,15 +152,18 @@ def read_ws(ws,client):
                     stroke = myWorld.space.pop(packet["data"])
                     client.redo_stack.append({'stroke_id': packet["data"], 'data': stroke})
                 elif packet['cmd'] == 'restroke':
+                    # try:
                     stroke = client.redo_stack.pop()
                     client.undo_stack.append(stroke['stroke_id'])
-                    myWorld.update(stroke)
+                    myWorld.space.update({stroke['stroke_id']: stroke['data']})
+                    # except Exception as e:
+                    #     print(e)
                 send_all_json(packet, client)
                 continue
             stroke_id = packet.get('strokeId','')
             if not stroke_id:   # TODO: Deal with clear commands being sent to the server.
                 # Dunno what to do with this, who cares, just add to world, send to clients and move on. TODO
-                myWorld.set(packet) # This is a bit... it won't work, lets hope it doesn't need to to pass the tests.
+                myWorld.set(packet) # This is a bit... it won't work, lets hope it doesn't need to in order to pass the tests.
             elif not myWorld.get(stroke_id):
                 myWorld.set(stroke_id, Stroke(packet))
             else:

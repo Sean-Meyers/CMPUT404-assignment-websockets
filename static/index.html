@@ -123,9 +123,11 @@ var H = canvas.height = window.innerHeight-50;
 var wscounter = 0;
 var socket;
 
-function clearWorld() {
+function clearWorld(updateServer=true) {
     undoStack.push({'type': 'clear', 'data': world});
-    socket.send(JSON.stringify({'cmd': 'clear'})); // A plan would've done wonders for consistency lol
+    if (updateServer) {
+        socket.send(JSON.stringify({'cmd': 'clear'})); // A plan would've done wonders for consistency lol
+    }
     world={};
     drawNextFrame()
 }
@@ -301,7 +303,7 @@ function redo() {
     } else if (stroke === 'clear') {
         // stroke isn't a Stroke, but a clear command
         socket.send(JSON.stringify({'cmd': 'reclear'}));
-        clearWorld();
+        clearWorld(false);  // FIXME: This should only clear the stuff that the original clear cleared, and not new stuff since then.
     }
     drawNextFrame();
 }
