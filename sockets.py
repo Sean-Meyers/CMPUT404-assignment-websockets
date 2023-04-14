@@ -83,7 +83,7 @@ class Stroke:
         self.begin = begin_entity
         self.tail = []  # Includes all points in stroke except begin_entity
         
-    # TODO: something something client_id so that we don't get a bug when multiple users start their strokes at the same place and time. this todo doesn't necesarilly belong in this class, I was just lazy. 
+    # TODO: add client_id to stroke id string somewhere so that we don't get a bug when multiple users start their strokes at the same place and time. this todo doesn't necesarilly belong in this class, I was just lazy. 
 
     def as_dict(self):
         return {'begin': self.begin, 'tool':self.tool, 'tail': self.tail} # Allows us to bulk send strokes if needed.
@@ -104,11 +104,13 @@ def send_all(msg, sender=None):
             client.put( msg )
 
 def send_all_json(obj, sender=None):
+    print('send all json:', obj)
     send_all( json.dumps(obj), sender )
 
 
 class Client:
     def __init__(self):
+        print('init client')
         self.queue = queue.Queue()
         self.undo_stack = []
         self.redo_stack = []
@@ -122,7 +124,7 @@ class Client:
 
 def read_ws(ws,client):
     '''A greenlet function that reads from the websocket and updates the world'''
-    # XXX: TODO IMPLEMENT ME
+    # XXX: Done. IMPLEMENT ME
 
     # {'x':x, 'y':y, 'colour':colour, 'radius':brushSize * penPressure, 'strokeId':strokeId, 'tool':tool}
     
@@ -135,6 +137,9 @@ def read_ws(ws,client):
                 print('Received nothing. As vengeance, your connection is now busted.')
                 break
             packet = json.loads(msg)
+            
+            # print('141, packet:', packet)
+            
             if packet.get('cmd'):
                 if packet['cmd'] == 'clear':
                     client.undo_stack.append(myWorld.world())
@@ -160,14 +165,20 @@ def read_ws(ws,client):
                     #     print(e)
                 send_all_json(packet, client)
                 continue
+            
+            # print('170, packet:', packet)
+            
             stroke_id = packet.get('strokeId','')
-            if not stroke_id:   # TODO: Deal with clear commands being sent to the server.
+            if not stroke_id:
                 # Dunno what to do with this, who cares, just add to world, send to clients and move on. TODO
-                myWorld.set(packet) # This is a bit... it won't work, lets hope it doesn't need to in order to pass the tests.
+                pass# myWorld.set(packet) # This is a bit... it won't work, lets hope it doesn't need to in order to pass the tests.
             elif not myWorld.get(stroke_id):
                 myWorld.set(stroke_id, Stroke(packet))
             else:
                 myWorld.get(stroke_id).tail.append(packet)
+                
+            # print('180, packet:', packet)
+                
             client.redo_stack = [];
             send_all_json(packet, client)
     except:

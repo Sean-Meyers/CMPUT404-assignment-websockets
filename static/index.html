@@ -60,6 +60,7 @@
     <script>
 
 // TODO: can move the canvas by having a translate object and moving all enities by that amount on draw frame.
+// May be better ways built into the canvas. I think I saw something in the mdn docs. Take a look first.
 
 var canvasColor = "white"
 var alpha = document.querySelector("#alpha").value
@@ -238,6 +239,7 @@ function getPosition(e) {
 //     redoStack = [];
 //     drawNextFrame(); // (but should we?)
 //     //XXX: Send a XHTML Request that updates the entity you just modified!
+//     // No, that's assignment 4 stuff, tho... there may be some benefit in having both... not today tho.
 // }
 
 // class BulkLogger {
@@ -590,7 +592,6 @@ function handleServerEntity(parsed_msg_data) {
         let new_stroke_from_new_bloke = Stroke(parsed_msg_data, tool, context);
         world[parsed_msg_data.strokeId] = new_stroke_from_new_bloke;
     }
-    // TODO: else if message === "clear" or something, except it's prolly in json. implement ws clearing stuff first.
 }
 
 // We don't want other user's actions to be undoable, even if it's a clear, so keep separate stacks
@@ -638,7 +639,7 @@ function wsSetup() {
     var url = "ws://"+host+"/subscribe";   
     socket = new WebSocket(url);
     socket.onopen = function() {
-        //XXX: TODO What are you going to do here?
+        //XXX: Done. What are you going to do here?
         // Nothin.
     };
     socket.onerror = function(msg) {
@@ -647,7 +648,7 @@ function wsSetup() {
     socket.onmessage = function(msg) {
         try {
             debug("WebSocket Recv:" + msg.data);
-            //XXX: TODO What are you going to do here?
+            //XXX: Done. What are you going to do here?
             // Convert ws data to strokes, add/remove to/from world
 
             // https://github.com/uofa-cmput404/cmput404-slides/blob/master/examples/WebSocketsExamples/static/chat.html

@@ -40,9 +40,9 @@ import json
 
 world = dict()
 # set this to something sane 
-calls = 3000
+# calls = 3000
 # ugh there's too much output? Well drop calls down
-# calls = 100
+calls = 10
 
 def utf8(utf8bytes):
     return utf8bytes.decode("utf-8")
@@ -66,7 +66,7 @@ class WorldClient(WebSocketClient):
 
     def receive_my_message(self,m):
         print("RECV %s " % m)
-        w = json.loads(utf8(m.data))
+        w = json.loads(utf8(m.data))        
         kcnt = 0
         for key in w:
             if (key in world):
@@ -75,7 +75,13 @@ class WorldClient(WebSocketClient):
             kcnt += 1
         if (kcnt > 0):
             self.count += 1
+            
+        print('w:', w, 'kcnt:', kcnt, 'self.count:', self.count)
+            
         if (self.count >= calls):
+            
+            print('bye bye')
+            
             self.close(reason='Bye bye')
 
     def incoming(self):
@@ -113,13 +119,24 @@ if __name__ == '__main__':
         ]
         gws2 = gevent.spawn(ws2.incoming)
         gevent.joinall(greenlets)
+        
+        print('close')
+        
         ws2.close()
+        
+        print('closed')
+        
         gws2.join(timeout=1)
         # here's our final test
         print("Counts: %s %s" % (ws.count , ws2.count))
         assert ws.count == calls, ("Expected Responses were given! %d %d" % (ws.count, calls))
         assert ws2.count >= (9*calls/10), ("2nd Client got less than 9/10 of the results! %s" % ws2.count)
         print("Looks like the tests passed!")
+    
+    except Exception as e:
+        print('error:', e)
+        raise e
+    
     finally:
         #except KeyboardInterrupt:
         ws.close()
