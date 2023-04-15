@@ -26,7 +26,7 @@ freetests.py is LICENSE'D under a BSD-like license:
 
 From ws4py
 
-Copyright (c) 2011-2014, Sylvain Hellegouarch, Abram Hindle
+Copyright (c) 2023, Sylvain Hellegouarch, Abram Hindle, Sean Meyers
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -59,3 +59,17 @@ Contributors
 * Mark Galloway
 * Abram Hindle
 * Cole Mackenzie
+
+References:
+===========
+
+* Abram Hindle: https://github.com/uofa-cmput404/cmput404-slides/blob/master/examples/WebSocketsExamples/static/chat.html
+* Abram Hindle: https://github.com/uofa-cmput404/cmput404-slides/blob/master/examples/WebSocketsExamples/chat.py
+* AJFarkas: https://stackoverflow.com/a/28056903
+* Alyssa Holland: https://www.smashingmagazine.com/2021/12/create-custom-range-input-consistent-browsers/
+* BalusC: https://stackoverflow.com/a/2006008
+* jdogdvr: https://stackoverflow.com/q/35426074
+* John Negoita: https://www.coding-dude.com/wp/css/create-a-triangle/
+* LOTUSMS: https://stackoverflow.com/a/47061022
+* Online Tutorials: https://www.youtube.com/watch?v=qQgZbUY9rHg
+* See Icons: https://www.flaticon.com/authors/see-icons
