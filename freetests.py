@@ -76,26 +76,31 @@ class WorldClient(WebSocketClient):
         if (kcnt > 0):
             self.count += 1
             
-        print('w:', w, 'kcnt:', kcnt, 'self.count:', self.count)
+        # print('w:', w, 'kcnt:', kcnt, 'self.count:', self.count)
             
-        if (self.count >= calls):
+        if (self.count >= calls):    # >=
             
-            print('bye bye')
+            print(self.name + ': bye bye')
             
             self.close(reason='Bye bye')
 
     def incoming(self):
+        print(self.name + ' (incoming): before while loop')
         while self.count < calls:
+            # print('in while loop')
             m = self.receive()
             print("Incoming RECV %s %s " % (self.name,m))
             if m is not None:
                 self.receive_my_message( m )
             else:
+                print(self.name + ' (incoming): m is none so return')
                 return
+        print(self.name + ' (incoming): exited while loop')
 
     def outgoing(self):
         for i in range(0,calls):
             self.send_new_entity(i)
+        print(self.name + ' (outgoing): exited for loop')
         
 if __name__ == '__main__':
     try:
@@ -117,8 +122,14 @@ if __name__ == '__main__':
             gevent.spawn(ws.incoming),
             gevent.spawn(ws.outgoing),
         ]
+        print('120')
         gws2 = gevent.spawn(ws2.incoming)
-        gevent.joinall(greenlets)
+        print('122')
+        # try:
+        gevent.joinall(greenlets)   #, raise_error=True, timeout=4
+        # except Exception as e:
+        #     # damnit just get to the next statement already.
+        #     print("freetests 126, error:", e)
         
         print('close')
         
@@ -133,9 +144,9 @@ if __name__ == '__main__':
         assert ws2.count >= (9*calls/10), ("2nd Client got less than 9/10 of the results! %s" % ws2.count)
         print("Looks like the tests passed!")
     
-    except Exception as e:
-        print('error:', e)
-        raise e
+    # except Exception as e:
+    #     print('error:', e)
+    #     raise e
     
     finally:
         #except KeyboardInterrupt:

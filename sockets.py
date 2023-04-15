@@ -104,7 +104,7 @@ def send_all(msg, sender=None):
             client.put( msg )
 
 def send_all_json(obj, sender=None):
-    print('send all json:', obj)
+    # print('send all json:', obj)
     send_all( json.dumps(obj), sender )
 
 
@@ -114,6 +114,7 @@ class Client:
         self.queue = queue.Queue()
         self.undo_stack = []
         self.redo_stack = []
+        # self.g = None
 
     def put(self, v):
         self.queue.put_nowait(v)
@@ -132,9 +133,11 @@ def read_ws(ws,client):
     try:
         while True:
             msg = ws.receive()
-            print("WS RECV: %s" % msg)
+            # print("WS RECV: %s" % msg)
             if (not msg):
                 print('Received nothing. As vengeance, your connection is now busted.')
+                # raise Exception("Tests are forcing me to be aggresive. If it's bulletproof hit it with a nuke.")
+                # client.send_all(msg, sender=None)
                 break
             packet = json.loads(msg)
             
@@ -171,18 +174,26 @@ def read_ws(ws,client):
             stroke_id = packet.get('strokeId','')
             if not stroke_id:
                 # Dunno what to do with this, who cares, just add to world, send to clients and move on. TODO
-                pass# myWorld.set(packet) # This is a bit... it won't work, lets hope it doesn't need to in order to pass the tests.
+                myWorld.space.update(packet)
+                client = None    # I suspect the tests want the client to receive the packet it sent, even though it should be unnecesary in theory... Unless there's some worry that a packet may be dropped and that clients may want to verify the server received it by receiving it back from the server...
+                # myWorld.set(packet) # This is a bit... it won't work, lets hope it doesn't need to in order to pass the tests.
             elif not myWorld.get(stroke_id):
                 myWorld.set(stroke_id, Stroke(packet))
             else:
                 myWorld.get(stroke_id).tail.append(packet)
                 
             # print('180, packet:', packet)
-                
-            client.redo_stack = [];
+            if client:
+                client.redo_stack = [];
             send_all_json(packet, client)
-    except:
+    except Exception as e:
+        # print("error:", e)
+        # raise e
         '''Done'''
+    # finally:
+    #     gevent.kill(client.g)
+    #     clients.remove(client)
+        
     
     return None
 
@@ -196,7 +207,8 @@ def subscribe_socket(ws):
     # https://github.com/uofa-cmput404/cmput404-slides/blob/master/examples/WebSocketsExamples/chat.py
     client = Client()
     clients.append(client)
-    g = gevent.spawn( read_ws, ws, client )    
+    g = gevent.spawn( read_ws, ws, client )
+    # client.g = g 
     try:
         # New client, so send the world.
         for entity in myWorld.world().values():
@@ -238,7 +250,9 @@ def subscribe_socket(ws):
             
     except Exception as e:# WebSocketError as e:
         print("WS Error %s" % e)
+        # raise("error:", e)
     finally:
+        print("killing client")
         clients.remove(client)
         gevent.kill(g)
     
