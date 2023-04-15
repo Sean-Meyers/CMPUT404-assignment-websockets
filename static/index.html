@@ -7,7 +7,7 @@
     <meta content='width=device-width; height=device-height; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;' name='viewport' />
     <meta name="viewport" content="width=device-width" />
     <meta name="license" content="
-        Copyright 2013 Google, Abram Hindle
+        Copyright 2023 Google, Abram Hindle, Sean Meyers
         
         Licensed under the Apache License, Version 2.0 (the "License");
         you may not use this file except in compliance with the License.
@@ -26,22 +26,22 @@
   <body bgcolor="white" height="100%" width="100%"> 
     <div id="debug"></div>
     <canvas id="c" width="100%" height="100%" style="-webkit-tap-highlight-color: transparent;"></canvas> 
-    <!-- center on screen: https://stackoverflow.com/a/2006008 -->
+    <!-- center on screen: BalusC: https://stackoverflow.com/a/2006008 -->
     <form action="" class="Menu" >
         <div class="ToolRow" id="colorStuff">
             <input type="color" name="color" id="color" class="MenuItem FormInput">
             <input type="range" name="alpha" id="alpha" min="0.1" max="1" step="0.1" class="MenuItem FormInput">
         </div>
         <div class="ToolRow" id="brushType">
-            <label for="tool_brush_segmented"><!-- Segmented -->
+            <label for="tool_brush_segmented">
                 <input type="radio" name="tool" id="tool_brush_segmented" value="brush_segmented" class="MenuItem FormInput" checked>
                 <span></span>
             </label>
-            <label for="tool_brush_unified"><!-- Unified -->
+            <label for="tool_brush_unified">
                 <input type="radio" name="tool" id="tool_brush_unified" value="brush_unified" class="MenuItem FormInput">
                 <span></span>
             </label>
-            <label for="tool_eraser"><!-- Eraser -->
+            <label for="tool_eraser">
                 <input type="radio" name="tool" id="tool_eraser" value="eraser" class="MenuItem FormInput">
                 <span></span>
             </label>
@@ -59,7 +59,7 @@
     </form>
     <script>
 
-// TODO: can move the canvas by having a translate object and moving all enities by that amount on draw frame.
+// TODO: Canvas moving. Can move the canvas by having a translate object and moving all enities by that amount on draw frame.
 // May be better ways built into the canvas. I think I saw something in the mdn docs. Take a look first.
 
 var canvasColor = "white"
@@ -74,7 +74,7 @@ var redoStack = [];
 
 var currentStrokeId = '';
 
-// hex to rgba thing: https://stackoverflow.com/a/28056903
+// hex to rgba thing: AJFarkas: https://stackoverflow.com/a/28056903
 // Can't believe js doesn't have something for this built-in (that i can find in less than a minute)
 function hexToRGB(hex, alpha) {
     var r = parseInt(hex.slice(1, 3), 16),
@@ -115,7 +115,7 @@ for (menuItem of menuItems) {
         }
     });
 }
-      // Fix me
+
 var canvas = document.getElementById('c');
 var host = window.location.host;
 var context = canvas.getContext("2d");
@@ -142,45 +142,12 @@ function debug(str) {
 
 world = {};
 
-// function drawCircle(context,entity) {
-//     with(context) {
-//         beginPath();                
-//         lineWidth = 3;
-//         var x = entity["x"];
-//         var y = entity["y"];
-//         //moveTo(x,y);
-//         fillStyle = entity["colour"];
-//         strokeStyle = fillStyle;
-
-//         arcRadius = (entity["radius"])  ?  entity["radius"]  :  50
-//         // Since vscode wont give me docs I'll get them myself:
-//         // MDN: arc(x, y, radius, startAngle, endAngle, counterclockwise)
-//         arc(x, y, arcRadius, 0, 2.0 * Math.PI, false);  // AKA draw a circle.
-//         stroke();       // See here: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/stroke     
-//     }
-// }
-
-function prepEntity(entity) {
-    if (!entity["colour"]) {
-        // alert("color: " + colour)
-        entity["colour"] = colour;
-    }
-    if (!entity["radius"]) {
-        entity["radius"] = 50;
-    }
-    return entity;
-}
-
 function clearFrame() {
     with(context) {
 	moveTo(0,0);
 	fillStyle = canvasColor;
 	fillRect(0,0,W,H);
     }
-}
-
-function distance2D(x1, y1, x2, y2) {
-    return Math.sqrt((x1 - x2)**2 + (y1 - y2)**2)
 }
 
 // This actually draws the frame
@@ -210,7 +177,6 @@ function drawFrame() {
 
 // This is unpleasent, canvas clicks are not handled well
 // So use this code, it works well on multitouch devices as well.
-
 function getPosition(e) {
 	if ( e.targetTouches && e.targetTouches.length > 0) {
 		var touch = e.targetTouches[0];
@@ -226,55 +192,6 @@ function getPosition(e) {
 		return [x,y];
 	}
 }
-
-// function addEntity(entity, data) {
-//     if (!world[entity]) {
-//         if (data.status === 'begin') {
-//             undoStack.push([entity]);
-//         } else {
-//             undoStack[undoStack.length - 1].push(entity);
-//         }
-//     }
-//     world[entity] = data;
-//     redoStack = [];
-//     drawNextFrame(); // (but should we?)
-//     //XXX: Send a XHTML Request that updates the entity you just modified!
-//     // No, that's assignment 4 stuff, tho... there may be some benefit in having both... not today tho.
-// }
-
-// class BulkLogger {
-//     constructor() {
-//         this.msg = ''
-//     }
-//     push(data) {
-//         if (Array.isArray(data)) {
-//             this.msg += '['
-//             for (let item of data) {
-//                 this.push(item);
-//                 this.msg += ', ';
-//             }
-//             this.msg += '] count: ' + data.length;
-//         } else if (typeof data === "object") {
-//             this.msg += '{'
-//             for (var key in data) {
-//                 this.msg += key + ': ';
-//                 this.push(data[key]);
-//                 this.msg += ', ';
-//             }
-//             this.msg += '} count: ' + Object.keys(data).length;
-//         } else {
-//             this.msg += data;
-//         }
-//     }
-//     print(doAlert=false) {
-//         // console.log('printed');
-//         if (doAlert) {
-//             alert(this.msg);
-//         } else {
-//             console.log(this.msg);
-//         }
-//     }
-// }
 
 function undo() {
     let action = undoStack.pop();
@@ -310,19 +227,13 @@ function redo() {
     drawNextFrame();
 }
 
-var counter = 0;
-
 // We'll assume for now that entities in the same spot on the same layer are the same entity.
+// TODO: add client_id to stroke id string or something so that we don't get a bug when multiple users start their strokes at the same place and time.
 function newEntityId(data) {
     return "pos" + data.x * W + data.y + 'time' + Date.now();
 }
 
-function repeatAtN(N=100) {
-    return "X" + (counter++) % N;
-}
-
 function addEntityWithoutName(data) {
-    // var name = repeatAtN();
     let name = newEntityId(data);
     addEntity(name,data);
 }
@@ -364,7 +275,6 @@ function newEntity(x, y, strokeId, end=false) {
         }
     }
     data["tool"] = tool;
-    // console.log('sending message:', data);
     socket.send( JSON.stringify( data ) );
     drawNextFrame();
     return strokeId;
@@ -408,21 +318,17 @@ mouse = (function() {
                 var y = pos[1];
 	        self.clicked = 1;
                 self.callListeners(self.mousedowners,x,y,self.clicked,e);
-                //addEntityWithoutName({'x':x,'y':y,'colour':'red'});
             }
         },
         mouseup: function(e) {
             e.preventDefault();
-            //alert(getPosition(e));
             if (self.wasClicked(e)) {
                 var pos = getPosition(e);
                 var x = pos[0];
                 var y = pos[1];
-	        //self.poppin(x,y);
 	        self.clicked = 0;
                 self.selected = -1;
                 self.callListeners(self.mouseuppers,x,y,self.clicked,e);
-                //addEntityWithoutName({'x':x,'y':y,'colour':'blue'});
             }
         },
         touchstart: function(e) {
@@ -440,7 +346,6 @@ mouse = (function() {
                 var x = pos[0];
                 var y = pos[1];
                 if (self.clicked != 0) {
-                    //self.squeakin(x,y);
                     if (e.pressure) {
                         penPressure = e.pressure;
                     }              
@@ -483,6 +388,20 @@ mouse.mousedraggers.push(function(x,y,clicked,e) {
     newEntity(x, y, currentStrokeId);
 });
 
+/** Represents all the context and data captured since the user touches the screen, up to and
+ * including when they stop touching the screen.
+ * 
+ * A stroke may be incomplete, such as when it is being rendered or sent to the server while the
+ * user is still drawing so that it can be seen in real time.
+ * 
+ * Params:
+ *  - beginEntity (object): The entity captured when the user's pen (or whatever) hits the screen.
+ *                          Sets various attributes for the rest of the stroke entities.
+ *  - tool (string): Which tool the user is using for this stroke. Determines how the data is drawn.
+ *  - ctx (CanvasRenderingContext2D): The thing we're drawing to.
+ * 
+ * This is a class(?), so it returns self. A better, more reliable, less confusing 'this'.
+ * */
 Stroke = (function(beginEntity, tool, ctx) {
     // Interesting OOP idea ^, don't mind if I do.
     var self = {
@@ -501,7 +420,7 @@ Stroke = (function(beginEntity, tool, ctx) {
                 case "brush_segmented":
                     self.ctx.strokeStyle = self.begin.colour;
                     for (let entity of self.mids) {
-                        // Smooth line drawing: https://stackoverflow.com/q/35426074
+                        // Smooth line drawing: jdogdvr: https://stackoverflow.com/q/35426074
                         // Whoda thunk it could be so simple yet so hard to figure out.
                         // self.ctx.strokeStyle = entity.colour; // Uncomment if strokes with varying color are eventually wanted.
                         self.ctx.lineWidth = entity.radius;
@@ -517,7 +436,6 @@ Stroke = (function(beginEntity, tool, ctx) {
                         self.ctx.lineWidth = self.end.radius;
                         self.ctx.lineTo(self.end.x, self.end.y);
                         self.ctx.stroke();
-                        // return; //?
                     }
                     break;
 
@@ -533,7 +451,8 @@ Stroke = (function(beginEntity, tool, ctx) {
                             self.ctx.lineTo(entity.x, entity.y);
                         }
                         if (entity) {
-                            self.ctx.lineWidth = entity.radius;     // Lets us adjust size of the whole stroke while drawing (if using pressure enabled pen)
+                            // Lets us adjust size of the whole stroke while drawing (if using pressure enabled pen)
+                            self.ctx.lineWidth = entity.radius;
                         } else {
                             self.ctx.lineWidth = self.begin.radius;
                         }
@@ -548,6 +467,7 @@ Stroke = (function(beginEntity, tool, ctx) {
 
                 case "eraser":
                     let clearParams = (x, y, rad) => {
+                        // Calculate bounding area for eraser based on stroke's brush size.
                         let upperRight = [x - rad, y - rad];
                         rad = rad * 2;
                         return [...upperRight, rad, rad];
@@ -569,9 +489,6 @@ Stroke = (function(beginEntity, tool, ctx) {
     return self;
 });
 
-function update() {
-    drawFrame();
-}
 
 // Handle a full stroke received from the server
 function handleServerStroke(parsed_msg_data) {
@@ -582,13 +499,17 @@ function handleServerStroke(parsed_msg_data) {
     world[different_stroke_from_different_folk.begin.strokeId] = different_stroke_from_different_folk;
 }
 
+// Handle a single entity, which would be part of a larger stroke.
 function handleServerEntity(parsed_msg_data) {
     let tool = parsed_msg_data.tool;
-    // delete parsed_msg_data.tool;
+
+    // If the stroke is already in our world, this entity is a part of its tail, so append to it.
     if (world[parsed_msg_data.strokeId]) {
         world[parsed_msg_data.strokeId].mids.push(parsed_msg_data);
     } else {
-        // Don't question it, I must be low on sleep and thus have questionable ideas of fun
+        // This is the beginning of a new stroke, so we'll instantiate it and put it in the world.
+
+        // Don't question it, I must be low on sleep and thus have questionable ideas of fun naming.
         let new_stroke_from_new_bloke = Stroke(parsed_msg_data, tool, context);
         world[parsed_msg_data.strokeId] = new_stroke_from_new_bloke;
     }
@@ -599,37 +520,49 @@ hiddenUndoStack = [];
 hiddenRedoStack = [];
 
 function handleServerCmd(parsed_msg_data) {
-    // Note: since we're dealing with the undos and redos of potentially several foreign
-    // users, can't clear the redostack when a new thing happens. May also be other
-    // weird bugs caused by this way of handeling things but eh, should be fine.
+    // Note: since we're dealing with the undos and redos of potentially several foreign users,
+    // can't clear the redostack when a new thing happens. May also be other weird bugs caused by
+    // this way of handeling things but eh, should be fine.
     switch (parsed_msg_data.cmd) {
         case 'clear':
             hiddenUndoStack.push(world);
             world={};
             break;
+
         case 'unclear':
             var thing = hiddenUndoStack.pop();
-            hiddenRedoStack.push(thing);    // Need to push the whole 'thing' since if someone else wants to re-clear, it doesn't erase all our own work between the initial clear and the redo
+
+            // Need to push the whole 'thing' since if someone else wants to re-clear, it doesn't
+            // erase all our own work between the initial clear and the redo.
+            hiddenRedoStack.push(thing);
             Object.assign(world, thing);
             break;
+
         case 'reclear':
-            var thing = hiddenRedoStack.pop();  // This will break if someone undoes something after the 'unclear' but before the 'reclear'.
+            var thing = hiddenRedoStack.pop();  // This could break if someone undoes something after the 'unclear' but before the 'reclear'.
             hiddenUndoStack.push(thing);
             for (let entity of Object.keys(thing)) {
                 delete world[entity];
             }
             break;
+
         case 'unstroke':
             var strokeId = parsed_msg_data.data;
             var stroke = world[strokeId];
             hiddenRedoStack.push({'strokeId': strokeId, 'data': stroke});
             delete world[strokeId];
             break;
+
         case 'restroke':
             var stroke = hiddenRedoStack.pop();
-            hiddenUndoStack.push(stroke.strokeId);  // May not be necessary the way we're doing things, since we're not calling undo to actually undo, but getting the id of what is to be undone from the server, pushing this to the undo stack may be useless.
+
+            // May not be necessary the way we're doing things, since we're not calling undo to
+            // actually undo, but getting the id of what is to be undone from the server, pushing
+            // this to the undo stack may be useless.
+            hiddenUndoStack.push(stroke.strokeId);
             world[stroke.strokeId] = stroke.data;
             break;
+
         default:
             break;
     }
@@ -638,6 +571,7 @@ function handleServerCmd(parsed_msg_data) {
 function wsSetup() {
     var url = "ws://"+host+"/subscribe";   
     socket = new WebSocket(url);
+
     socket.onopen = function() {
         //XXX: Done. What are you going to do here?
         // Nothin.
@@ -645,12 +579,14 @@ function wsSetup() {
     socket.onerror = function(msg) {
         debug("WebSocket Error:" + msg.data);
     };
+
     socket.onmessage = function(msg) {
         try {
             debug("WebSocket Recv:" + msg.data);
             //XXX: Done. What are you going to do here?
             // Convert ws data to strokes, add/remove to/from world
 
+            // More shameless ripping from prof. Abram Hindle:
             // https://github.com/uofa-cmput404/cmput404-slides/blob/master/examples/WebSocketsExamples/static/chat.html
             var message = JSON.parse(msg.data);
             if (message.tail) {
@@ -668,8 +604,12 @@ function wsSetup() {
     }; 
 }
 
-wsSetup();
+function update() {
+    drawFrame();
+}
 
+
+wsSetup();
 
 
 

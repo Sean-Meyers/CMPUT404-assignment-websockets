@@ -9,10 +9,8 @@ input[type="color"]
 {
     opacity: var(--alpha);
     border-radius: 50%;
-    /* border-style:; */
     width: 3rem;
     height: 3rem;
-    /* padding: .5rem; */
     background-color: transparent;
     cursor: pointer;   
     border-radius: 50%;
@@ -35,25 +33,17 @@ input[type="color"]::-moz-color-swatch
 
 
 /* @media (min-width: 60em) { */
-/* center fixed thing on screen: https://stackoverflow.com/a/2006008 */
+/* center fixed thing on screen: BalusC: https://stackoverflow.com/a/2006008 */
     .Menu
     {
-        /* background-color: darkslategrey; */
-        /* text-align: center;
-        vertical-align: center; */
-        /* color: aqua; */
         position: fixed;
         top: 5%;
         left: 50%;
         transform: translate(-50%, 0);
         border-style: groove;
-        /* border-color: aqua; */
         border-radius: 1em;
         font-size: 26pt;
-        /* column-gap: .25em; */
         padding: .1em;
-        /* max-width: 100vh; */
-        /* flex-wrap: nowrap; */
         flex-grow: 1;
         flex-shrink: 1;
 
@@ -62,20 +52,13 @@ input[type="color"]::-moz-color-swatch
         align-items: center;
         min-height: 5vh;
         background: #001f24;
-        /* flex-direction: row; */
-
     }
 /* } */
 .MenuItem
 {
-    /* flex-direction: row; */
     justify-content: space-evenly;
-    /* padding: .15em; */
     flex-grow: 1;
     flex-shrink: 1;
-    /* color: aqua; */
-    /* border-style: groove; */
-    /* border-color: aqua; */
     border-radius: 1000000000000000000px;
 }
 .ToolRow
@@ -89,7 +72,6 @@ input[type="color"]::-moz-color-swatch
     flex-grow: 1;
     flex-shrink: 1;
     max-width: max-content;
-    /* position: relative; */
     align-items: center;
 }
 
@@ -108,16 +90,12 @@ input[type="color"]::-moz-color-swatch
     content: 'clear';
 }
 
-/*fancy radio buttons: https://www.youtube.com/watch?v=qQgZbUY9rHg */
+/*fancy radio buttons: Online Tutorials: https://www.youtube.com/watch?v=qQgZbUY9rHg */
 label
 {
     align-items: center;
-    /* justify-content: space-evenly; */
     text-align: center;
-    /* border-style: none; */
-    /* font-size: small; */
     position: relative;
-    /* top: .5em; */
     cursor: pointer;
     display: flex;
     flex-direction: column;
@@ -131,8 +109,8 @@ button, span
 {
     position: relative;
     display: block;
-    width: 1.5em/* 200px */;
-    height: 1.5em/* 70px */;
+    width: 1.5em;
+    height: 1.5em;
     background: black;
     border-radius: 50%;
 }
@@ -160,7 +138,6 @@ label input:checked ~ span::before
 {
   content: '';
     color: white;
-    /* text-shadow: 0 0 20px #0f0; */
     background: linear-gradient(to top, #081d22, #073130);
     box-shadow: 0 2px 5px rgba(0,0,0,0.5),
         inset 1px 1px 1px rgba(0,0,0,0.4),
@@ -170,26 +147,12 @@ button:active::before
 {
     content: '';
     color: #030f11;
-    /* text-shadow: 0 0 20px #0f0; */
     background: linear-gradient(to top, #081d22, #073130);
     box-shadow: 0 2px 5px rgba(0,0,0,0.5),
         inset 1px 1px 1px rgba(0,0,0,0.4),
         inset -1px -1px 4px rgba(255,255,255,0.2);
     text-shadow: none;
 }
-/* #tool_brush_segmented:checked ~ span::before
-{
-    content: "Segmented";
-    color: white;
-    text-shadow: 0 0 2px white,
-        0 0 5px white,
-        0 0 10px white,
-        0 0 15px white,
-        0 0 20px white,
-        0 0 25px white,
-        0 0 30px white,
-        0 0 40px white;
-} */
 
 #tool_brush_segmented ~ span::after
 {
@@ -242,8 +205,6 @@ button:active::before
 {
     /* Eraser icon by See Icons at https://www.flaticon.com/authors/see-icons */
     content: url(eraser.png);
-    /* background-image: url(eraser.png); */
-    /* background-size: contain; */
     position: absolute;
     bottom: 50%;
     right: 50%;
@@ -287,7 +248,7 @@ button::before
 
 /********************************************************************** Slider Styles ******************************************************************/
 
-/* how to style sliders multi browser: https://www.smashingmagazine.com/2021/12/create-custom-range-input-consistent-browsers/ */
+/* how to style sliders multi browser: Alyssa Holland: https://www.smashingmagazine.com/2021/12/create-custom-range-input-consistent-browsers/ */
 /* clear default range style */
 input[type="range"]
 {
@@ -320,10 +281,8 @@ input[type="range"]
     transform: scaleX(1) scaleY(1) scaleZ(1);
 
     cursor: pointer;
-    /* width: 15rem; */
     height: 1.5em;
     min-width: 7rem;
-    /* max-width: 15rem; */
 }
 
 
@@ -335,7 +294,7 @@ input[type="range"]::-webkit-slider-thumb
     -webkit-appearance: none; /* Override default look */
     appearance: none;
     /* margin-top = (track height in pixels / 2) - (thumb height in pixels /2) */
-    margin-top: calc((1.5em - 1.8em) / 2);/* Centers thumb on the track */
+    margin-top: calc((1.5em - 1.8em) / 2);  /* Centers thumb on the track */
     height: 1.8em;
     width: 1.8em;
     box-shadow: inset -1px -3px 3px rgba(0,0,0,0.5),
@@ -346,7 +305,7 @@ input[type="range"]::-webkit-slider-thumb
 } input[type="range"]::-moz-range-thumb {
     border: none; /*Removes extra border that FF applies*/
     /*border-radius: 0; Removes default border-radius that FF applies*/
-    background-color: var(--brush-color)/* #f00 */;
+    background-color: var(--brush-color);
     height: 1.8em;
     width: 1.8em;
     box-shadow: inset -1px -3px 3px rgba(0,0,0,0.5),
@@ -361,10 +320,7 @@ input[type="range"]::-webkit-slider-thumb
 #alpha::-webkit-slider-runnable-track
 {
   background: linear-gradient(to right, transparent, var(--color-no-alpha));
-  /* height: calc((var(--brush-size)  / 100) * 1rem); */
-  /* border-radius: calc((var(--brush-size) / 100) * 1rem); */
   border-radius: 1em;
-  /* outline: 4px ridge rgb(81, 81, 81); */
   border-style: groove;
   border-color: darkgray;
   height: 1.5em;
