@@ -44,8 +44,7 @@ input[type="color"]::-moz-color-swatch
 
 
 
-
-/* @media (min-width: 60em) { */
+/* @media (min-width: 60em) { */ /*https://stackoverflow.com/a/59823172*/
 /* center fixed thing on screen: BalusC: https://stackoverflow.com/a/2006008 */
     .Menu
     {
